@@ -8,10 +8,10 @@ namespace GraduationTracker
 {
     public class Repository
     {
-        public static Student GetStudent(int id)
+        public static IStudent GetStudent(int id)
         {
-            var students = GetStudents();
-            Student student = null;
+            IStudent[] students = GetStudents();
+            IStudent student = null;
 
             for (int i = 0; i < students.Length; i++)
             {
@@ -23,10 +23,10 @@ namespace GraduationTracker
             return student;
         }
 
-        public static Diploma GetDiploma(int id)
+        public static IDiploma GetDiploma(int id)
         {
-            var diplomas = GetDiplomas();
-            Diploma diploma = null;
+            IDiploma[] diplomas = GetDiplomas();
+            IDiploma diploma = null;
 
             for (int i = 0; i < diplomas.Length; i++)
             {
@@ -39,23 +39,14 @@ namespace GraduationTracker
 
         }
 
-        public static Requirement GetRequirement(int id)
+        public static IRequirement GetRequirement(int id)
         {
-            var requirements = GetRequirements();
-            Requirement requirement = null;
-
-            for (int i = 0; i < requirements.Length; i++)
-            {
-                if (id == requirements[i].Id)
-                {
-                    requirement = requirements[i];
-                }
-            }
-            return requirement;
+            IRequirement[] requirements = GetRequirements();
+            return requirements.Where(x => x.Id == id).SingleOrDefault();
         }
 
 
-        private static Diploma[] GetDiplomas()
+        private static IDiploma[] GetDiplomas()
         {
             return new[]
             {
@@ -63,71 +54,93 @@ namespace GraduationTracker
                 {
                     Id = 1,
                     Credits = 4,
-                    Requirements = new int[]{100,102,103,104}
+                    Requirements = new []{ GetRequirement(100), GetRequirement(102), GetRequirement(103), GetRequirement(104) }
                 }
             };
         }
 
-        public static Requirement[] GetRequirements()
-        {   
-                return new[]
-                {
-                    new Requirement{Id = 100, Name = "Math", MinimumMark=50, Courses = new int[]{1}, Credits=1 },
-                    new Requirement{Id = 102, Name = "Science", MinimumMark=50, Courses = new int[]{2}, Credits=1 },
-                    new Requirement{Id = 103, Name = "Literature", MinimumMark=50, Courses = new int[]{3}, Credits=1},
-                    new Requirement{Id = 104, Name = "Physichal Education", MinimumMark=50, Courses = new int[]{4}, Credits=1 }
+        public static IRequirement[] GetRequirements()
+        {
+            return new[]
+            {
+                    new Requirement{Id = 100, Name = "Math", MinimumMark=50, Courses = new []{GetCourse(1)}, Credits=1 },
+                    new Requirement{Id = 102, Name = "Science", MinimumMark=50, Courses = new []{GetCourse(2)}, Credits=1 },
+                    new Requirement{Id = 103, Name = "Literature", MinimumMark=50, Courses = new []{GetCourse(3)}, Credits=1},
+                    new Requirement{Id = 104, Name = "Physichal Education", MinimumMark=50, Courses = new []{GetCourse(4)}, Credits=1 }
                 };
         }
-        private static Student[] GetStudents()
+        private static IStudent[] GetStudents()
         {
             return new[]
             {
                new Student
                {
                    Id = 1,
-                   Courses = new Course[]
-                   {
-                        new Course{Id = 1, Name = "Math", Mark=95 },
-                        new Course{Id = 2, Name = "Science", Mark=95 },
-                        new Course{Id = 3, Name = "Literature", Mark=95 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=95 }
-                   }
+                   Courses = new []
+                {
+                    GetCourse(1,95),
+                    GetCourse(2,95),
+                    GetCourse(3,95),
+                    GetCourse(4,95)
+                }
                },
                new Student
                {
                    Id = 2,
-                   Courses = new Course[]
+                   Courses = new []
                    {
-                        new Course{Id = 1, Name = "Math", Mark=80 },
-                        new Course{Id = 2, Name = "Science", Mark=80 },
-                        new Course{Id = 3, Name = "Literature", Mark=80 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=80 }
+                        GetCourse(1,80),
+                        GetCourse(2,80),
+                        GetCourse(3,80),
+                        GetCourse(4,80)
                    }
                },
             new Student
             {
                 Id = 3,
-                Courses = new Course[]
+                Courses = new []
                 {
-                    new Course{Id = 1, Name = "Math", Mark=50 },
-                    new Course{Id = 2, Name = "Science", Mark=50 },
-                    new Course{Id = 3, Name = "Literature", Mark=50 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=50 }
+                    GetCourse(1,50),
+                    GetCourse(2,50),
+                    GetCourse(3,50),
+                    GetCourse(4,50)
                 }
             },
             new Student
             {
                 Id = 4,
-                Courses = new Course[]
+                Courses = new []
                 {
-                    new Course{Id = 1, Name = "Math", Mark=40 },
-                    new Course{Id = 2, Name = "Science", Mark=40 },
-                    new Course{Id = 3, Name = "Literature", Mark=40 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=40 }
+                    GetCourse(1,40),
+                    GetCourse(2,40),
+                    GetCourse(3,40),
+                    GetCourse(4,40)
                 }
             }
 
             };
+        }
+        private static ICourse[] GetCourses()
+        {
+            return new[]
+                {
+                    new Course{Id = 1, Name = "Math" },
+                    new Course{Id = 2, Name = "Science" },
+                    new Course{Id = 3, Name = "Literature" },
+                    new Course{Id = 4, Name = "Physichal Education" }
+                };
+        }
+        protected static ICourse GetCourse(int id, int marks)
+        {
+            ICourse[] courses = GetCourses();
+            ICourse course = GetCourse(id);
+            course.Mark = marks;
+            return course;
+        }
+        protected static ICourse GetCourse(int id)
+        {
+            ICourse[] courses = GetCourses();
+            return courses.Where(x => x.Id == id).SingleOrDefault();
         }
     }
 
